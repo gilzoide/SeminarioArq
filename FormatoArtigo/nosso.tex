@@ -7,7 +7,8 @@
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{graphicx}
-
+\usepackage[font=small,skip=5pt]{caption}
+\usepackage{float}
 
 %% bare_jrnl.tex
 %% V1.3
@@ -394,11 +395,6 @@
 % (Unless specifically asked to do so by the journal or conference you plan
 % to submit to, of course. )
 
-
-% correct bad hyphenation here
-\hyphenation{op-tical net-works semi-conduc-tor}
-
-
 \begin{document}
 %
 % paper title
@@ -415,9 +411,9 @@
 % was not built to handle multiple paragraphs
 %
 
-\author{Ana Caroline Spengler - 8532356,
-        Gil Barbosa Reis - 8532248,
-        Paulo Bardes Nogueira Nascimento - 8531932% <-this % stops a space
+\author{Ana Caroline Spengler -- 8532356\\
+        Gil Barbosa Reis -- 8532248\\
+        Paulo Bardes Nogueira Nascimento -- 8531932% <-this % stops a space
 }
 
 % note the % following the last \IEEEmembership and also \thanks - 
@@ -473,7 +469,7 @@
 
 \begin{abstract}
 %\boldmath
-Nesse documento discutiremos a máquina Dataflow de Manchester, uma máquina Dataflow {\em tagged token}, suas características e implementação.
+Nesse documento discutiremos as características e implementação da a máquina Dataflow de Manchester, uma máquina Dataflow {\em tagged token} dinâmica criada no início dos anos 80.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -502,8 +498,6 @@ Manchester, Dataflow, Arquitetura
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
-
-
 \section{Introdução}
 % The very first letter is a 2 line initial drop letter followed
 % by the rest of the first word in caps.
@@ -520,13 +514,15 @@ Manchester, Dataflow, Arquitetura
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{A}{} máquina Dataflow de Manchester é uma máquina baseada no fluxo de dados. Sendo assim, instruções não têm posições de memória específicas, podendo serem concebidas como operações puras. Ela é uma máquina dataflow dinâmica, ou seja, os dados são transmitidos em pacotes rotulados, chamados {\em Tokens}, o que possibilita a execução de código reentrante.
+\IEEEPARstart{A}{} máquina Dataflow de Manchester é uma máquina baseada no fluxo de dados. Sendo assim, instruções não têm posições de memória específicas, podendo serem concebidas como operações puras. Ela é uma máquina dataflow dinâmica, ou seja, os dados são transmitidos em pacotes rotulados, chamados {\em Tokens}.
 
 \section{Dataflow}
 \subsection{Modelo dataflow}
-Dataflow é um paradigma de computação baseado no fluxo de dados, ou seja, a sequência de instruções necessárias para o processamento dos dados não é definida pelo programador. Seu trabalho é elaborar uma rede de conexões entre operações básicas, de modo que os dados possam fluir pelas conexões concorrentemente.
+Dataflow é um paradigma de computação baseado no fluxo de dados, ou seja, a sequência de instruções necessárias para o processamento dos dados não é definida pelo programador. Seu trabalho é elaborar uma rede de conexões entre operações básicas, de modo que os dados possam fluir pelas conexões, sendo computados concorrentemente.
 
-Como os dados fluem pelos caminhos, não há variáveis ou posições de memória que possam referenciá-los. Porém é possível haver uma atribuição inicial no procedimento.
+Como os dados fluem pelos caminhos, não há variáveis ou posições de memória que possam referenciá-los. É possível porém, definir um valor inicial para garantir o conteúdo durante a execução inicial do procedimento.
+
+Além disso, os dados só podem fluir pelas unidades funcionais se todos os operadores necessários estiverem disponíveis. Caso contrário, os dados ficam parados até que os outros estejam disponíveis.
 
 \subsection{A estrutura de um programa dataflow}
 
@@ -537,21 +533,74 @@ A compilação de programas em alto nível são inicialmente traduzidas para uma
 A última fase da compilação forma um programa em código de máquina com a entrada. A Figura \ref{fig:dataflow} mostra a representação gráfica usual de programas dataflow.
 
 \subsection{Dataflow dinâmico}
-Existem 
+Existem dois tipos de maquinas dataflow: {\bf dinâmicas} e {\bf estáticas}. Em máquinnas estáticas não é possível executar nenhum tipo de código reentrante sem auxilio de alguma extrutura interna para garantir que {\em tokens} de contextos diferentes não se misturem.
+
+Já maquinas dinâmicas permitem a execução de códigos reentrantes usando-se rótulos ({\em tags}), que atuam como identificadores de contexto de cada token, permitindo diferenciar cada um deles dinâmicamente em tempo de execução e tratá-los corretamente.
 
 
-\break
+\section{Implementação}
+\subsection{Tokens}
+A Máquina de Manchester possui {\em tokens} representados por 96 bits divididos da seguinte forma: dados (37 bits), rótulo (36 bits), destino (22 bits), marcador (1 bit). 
+
+O rótulo por sua vez e subdividido em três tipos:
+\begin{description}
+\item[\bf Nível de Iteração] \hfill \\
+	Usado para diferenciar tokens de difernetes iterações de um loop.
+\item[\bf Nome de Ativação]  \hfill \\
+	Usado para diferenciar diferentes chamadas de um trecho de código, inclusive chamadas recursivas.
+\item[\bf Índice] \hfill \\
+	Usado quando uma mesma operação é aplicada a diversos elementos de uma estrutura de dados.
+\end{description}
+
+
+\subsection{Token Ring}
+O {\em Token Ring} é um conjunto de unidades funcionais onde os tokens circulam, sendo processados. A Figura \ref{fig:tokenRing} mostra as unidades funcionais do token ring.
+
+\begin{description}
+\item[\bf I/O Switch] \hfill \\
+	O I/O Switch é o bloco de entrada e saída da máquina. É usado para carregar o programa na memória e transferir resultados de volta.
+\item[\bf Token Queue] \hfill \\ 
+	É uma estrutura que enfileira os pacotes, para que esses fluam com uma taxa compatível com a taxa de entrada de tokens na Matching Unit.
+\item[\bf Matching Unit] \hfill \\
+	É a responsável por unir tokens de entrada de uma mesma operação. Essa combinação é feita levando-se em consideração os destinos e os rótulos. É usado um algorítimo de hash para isso. Quando todo o espaço da tabela hash está ocupado, tokens são armazenados na Overflow Unit. 
+\item[\bf Overflow Unit] \hfill \\
+	Faz o mesmo papel da Matching Unit, porém sacrificando performance em prol de maior espaço para tokens excedentes.
+\item[\bf Instruction Store] \hfill \\
+	É uma estrutura que recebe tokens cominados e buscar o {\em opcode} da operação correspondente ao destino dos tokens recebidos, montando um pacote executável. 
+\item[\bf Processing Unit] \hfill \\
+	Unidade que recebe o pacote executável, o pre-processa e encaminha para a unidade funcional correspondente à operação. Após execução da operação, um novo token é gerado e mandado para o Token Queue, recomeçando o ciclo.
+\end{description}
+
+
+\begin{thebibliography}{1}
+
+\bibitem{IEEEhowto:kopka}
+J. R. GURD, C. C. KIRKHAM, and I. WATSON (1985). {\em THE MANCHESTER PROTOTYPE DATAFLOW COMPUTER}. Communications of the ACM, 28 (1), 34-52.
+
+\end{thebibliography}
+
+\onecolumn
 
 \lstinputlisting[label=lst:sisal,frame=single,tabsize=4,caption=Programa exemplo em Sisal]{sisal.txt}
 
+\break
+
 \lstinputlisting[label=lst:tass,frame=single,tabsize=4,caption=Programa acima escrito em TASS]{tass.txt}
 
-
+\break
 
 \begin{figure}
+	\centering
 	\caption{Fluxo de dados do Listing \ref{lst:sisal}}
 	\label{fig:dataflow}
-	\includegraphics[width=.5\textwidth]{programa}
+	\includegraphics[height=\textheight]{programa}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\caption{Token Ring da máquina dataflow de Manchester}
+	\label{fig:tokenRing}
+	\includegraphics[width=\textwidth]{figura}
 \end{figure}
 
 % needed in second column of first page if using \IEEEpubid
@@ -687,12 +736,7 @@ Existem
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-J. R. GURD, C. C. KIRKHAM, and I. WATSON (1985). {\em THE MANCHESTER PROTOTYPE DATAFLOW COMPUTER}. Communications of the ACM, 28 (1), 34-52.
-
-\end{thebibliography}
 
 % biography section
 % 
@@ -704,36 +748,6 @@ J. R. GURD, C. C. KIRKHAM, and I. WATSON (1985). {\em THE MANCHESTER PROTOTYPE D
 % simpler here.)
 %\begin{biography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
 % or if you just want to reserve a space for a photo:
-
-\begin{IEEEbiography}{Michael Shell}
-Biography text here.
-\end{IEEEbiography}
-
-% if you will not have a photo at all:
-\begin{IEEEbiographynophoto}{John Doe}
-Biography text here.
-\end{IEEEbiographynophoto}
-
-% insert where needed to balance the two columns on the last page with
-% biographies
-%\newpage
-
-\begin{IEEEbiographynophoto}{Jane Doe}
-Biography text here.
-\end{IEEEbiographynophoto}
-
-% You can push biographies down or up by placing
-% a \vfill before or after them. The appropriate
-% use of \vfill depends on what kind of text is
-% on the last page and whether or not the columns
-% are being equalized.
-
-%\vfill
-
-% Can be used to pull up biographies so that the bottom of the last one
-% is flush with the other column.
-%\enlargethispage{-5in}
-
 
 
 % that's all folks
