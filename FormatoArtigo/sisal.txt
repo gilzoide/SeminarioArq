@@ -1,0 +1,19 @@
+export Integrate
+
+function Integrate (returns real)
+
+for initial
+	int	:= 0.0;
+	y	:= 0.0;
+	x	:= 0.02
+while
+	x < 1.0
+repeat
+	int	:= 0.01 * (old y + y);
+	y	:= old x * old x;
+	x	:= old x + 0.02
+returns
+	value of sum int
+end for
+
+end function

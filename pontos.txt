@@ -2,7 +2,10 @@
   outras, podendo ser vistas como operações puras
 - Dados são transmitidos em pacotes com rótulos (tags), chamados de Tokens
 - Reentrância: token matching
+
 - Token ring é quem processa os rolê, sabendo em qual iteração tá, pra não
   cagar os código reentrante
 - Matching Unit usa função Hash pra dar match nos tokens
 - Overflow Unit é usado quando dá colisão de chaves
+- Operações são sempre unárias ou binárias. Além disso, operações binárias
+  podem virar unárias, usando uma constante

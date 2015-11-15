@@ -1,0 +1,45 @@
+(\I "TASS" "TSM")
+
+! Integration by trapezoidal rule
+! ===============================
+
+! initialize the loop variables
+int			= (Data "R 0.0");
+y			= (Data "R 0.0");
+x			= (Data "R 0.02");
+
+! merge the initial values with the loop
+! output values
+int_mrg		= (Mer int new_int);
+y_mrg		= (Mer y new_y);
+x_mrg		= (Mer x new_x);
+
+! test for termination of loop
+test		= (CGR "R 1.0" x_mrg);
+
+! gate the loop variables into new loop
+! instance or direct result to output
+gate_int	= (BRR int_mrg test);
+old_int		= gate_int.R;
+old_y		= (BRR y_mrg test).R;
+old_x		= (BRR x_mrg test).R;
+
+result		= (SIL gate_int.L "O 0").L;
+
+! loop body: form new values for loop
+! variables
+incr_x		= (ADR old_x "R 0.02");
+x_sq		= (MLR old_x old_x);
+height_2	= (ADR old_y x_sq);
+area		= (MLR "R 0.01" height_2);
+cum_area	= (ADR old_int area);
+
+! increment iteration level for new loop
+! variables
+new_int		= (ADL cum_area "I 1").L;
+new_y		= (ADL x_sq "I 1").L;
+new_x		= (ADL incr_x "I 1").L;
+
+! output the final value of int
+			(OPT result "G 0");
+(Finish);
