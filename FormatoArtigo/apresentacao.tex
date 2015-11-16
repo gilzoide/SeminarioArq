@@ -12,11 +12,11 @@
 
 \usetheme{Warsaw}
 \title{Manchester Dataflow Processor}
-\author[Ana C. Spengler, Gil B. Reis, Paulo B. N. Nascimento]
+\author[Ana, Gil, Paulo]
 		{Ana Caroline Spengler -- 8532356 \\
         Gil Barbosa Reis -- 8532248 \\
         Paulo Bardes Nogueira Nascimento -- 8531932}
-\institute{ICMC - USP São Carlos}
+\institute[ICMC]{ICMC - USP São Carlos}
 \date{\today}
 \useoutertheme{infolines}
 % Começa!
@@ -79,8 +79,99 @@
 		\end{itemize}
 \end{frame}
 
+% Token Ring, um pra cada
 \begin{frame}{Token Ring}
 	\subsection{Token Ring}
+	\begin{figure}
+		\centering
+		\caption{Token Ring da Máquina Dataflow de Manchester}
+		\label{fig:tokenRing}
+		\includegraphics[height=.87\textheight]{figura}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{I/O Switch}
+	\subsubsection{I/O Switch}
+	\begin{columns}
+		\column{6cm}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{IOSwitch}
+			\end{figure}
+
+		\column{.5\textwidth}
+			O I/O Switch é o bloco de entrada e saída da máquina. É usado para carregar o programa na memória e transferir resultados de volta.
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Token Queue}
+	\subsubsection{Token Queue}
+	\begin{columns}
+		\column{6cm}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{TokenQueue}
+			\end{figure}
+
+		\column{.5\textwidth}
+			É uma estrutura que enfileira os pacotes, para que esses fluam com uma taxa compatível com a taxa de entrada de tokens na Matching Unit.
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Matching Unit}
+	\subsubsection{Matching Unit}
+	\begin{columns}
+		\column{6cm}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{MatchingUnit}
+			\end{figure}
+
+		\column{.5\textwidth}
+			É a responsável por unir tokens de entrada de uma mesma operação. Essa combinação é feita levando-se em consideração os destinos e os rótulos. É usado um algorítimo de hash para isso. Quando todo o espaço da tabela hash está ocupado, tokens são armazenados na Overflow Unit.
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Overflow Unit}
+	\subsubsection{Overflow Unit}
+	\begin{columns}
+		\column{6cm}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{OverflowUnit}
+			\end{figure}
+
+		\column{.5\textwidth}
+			Faz o mesmo papel da Matching Unit, porém sacrificando performance em prol de maior espaço para tokens excedentes.
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Instruction Store}
+	\subsubsection{Instruction Store}
+	\begin{columns}
+		\column{6cm}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{InstructionStore}
+			\end{figure}
+
+		\column{.5\textwidth}
+			É uma estrutura que recebe tokens cominados e buscar o {\em opcode} da operação correspondente ao destino dos tokens recebidos, montando um pacote executável.
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Processing Unit}
+	\subsubsection{Processing Unit}
+	\begin{columns}
+		\column{6cm}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{ProcessingUnit}
+			\end{figure}
+
+		\column{.5\textwidth}
+			Unidade que recebe o pacote executável, o pre-processa e encaminha para a unidade funcional correspondente à operação. Após execução da operação, um novo token é gerado e mandado para o Token Queue, recomeçando o ciclo.
+	\end{columns}
 \end{frame}
 
 
