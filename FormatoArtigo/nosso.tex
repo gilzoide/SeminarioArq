@@ -469,7 +469,7 @@
 
 \begin{abstract}
 %\boldmath
-Nesse documento discutiremos as características e implementação da a máquina Dataflow de Manchester, uma máquina Dataflow {\em tagged token} dinâmica criada no início dos anos 80.
+Nesse documento discutiremos as características e implementação da a máquina Dataflow de Manchester, uma máquina dataflow {\em tagged token} (dinâmica) criada no início dos anos 80.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -482,10 +482,6 @@ Nesse documento discutiremos as características e implementação da a máquina
 \begin{IEEEkeywords}
 Manchester, Dataflow, Arquitetura
 \end{IEEEkeywords}
-
-
-
-
 
 
 % For peer review papers, you can put extra information on the cover
@@ -514,7 +510,11 @@ Manchester, Dataflow, Arquitetura
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{A}{} máquina Dataflow de Manchester é uma máquina baseada no fluxo de dados. Sendo assim, instruções não têm posições de memória específicas, podendo serem concebidas como operações puras. Ela é uma máquina dataflow dinâmica, ou seja, os dados são transmitidos em pacotes rotulados, chamados {\em Tokens}.
+\IEEEPARstart{E}{m} meados dos anos 70 e 80 maquinas dataflow cresceram em popularidade na área acadêmica, tornaram-se alvo de diversos estudos. Múltiplos projetos e protótipos ao redor do mundo começaram a ser construidos e estudados. Entre essas máquinas estava o projeto da Máquina Dataflow de Manchester.
+
+Poucos projetos chegaram a de fato implementar os designs propostos, e meno ainda atingiram um protótipo funcional. A da Máquina de Manchester foi um dos poucos projetos que saiu do papel, não só um protótipo funcional, mas com um {\em toolkit} bastante completo incluindo: compilador, assembler e simulador. 
+
+Sendo uma máquina baseada no fluxo de dados. Sendo assim, instruções não têm posições de memória específicas, podendo serem concebidas como operações puras. Ela é uma máquina dataflow dinâmica, ou seja, os dados são transmitidos em pacotes rotulados, chamados {\em Tokens}.
 
 \section{Dataflow}
 \subsection{Modelo dataflow}
@@ -536,8 +536,8 @@ A última fase da compilação forma um programa em código de máquina com a en
 Existem dois tipos de maquinas dataflow: {\bf dinâmicas} e {\bf estáticas}. Em máquinnas estáticas não é possível executar nenhum tipo de código reentrante sem auxilio de alguma extrutura interna para garantir que {\em tokens} de contextos diferentes não se misturem.
 
 Já maquinas dinâmicas permitem a execução de códigos reentrantes usando-se rótulos ({\em tags}), que atuam como identificadores de contexto de cada token, permitindo diferenciar cada um deles dinâmicamente em tempo de execução e tratá-los corretamente.
-
-
+\vfill
+\break
 \section{Implementação}
 \subsection{Tokens}
 A Máquina de Manchester possui {\em tokens} representados por 96 bits divididos da seguinte forma: dados (37 bits), rótulo (36 bits), destino (22 bits), marcador (1 bit). 
