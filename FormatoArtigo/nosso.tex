@@ -510,7 +510,7 @@ Manchester, Dataflow, Arquitetura
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{E}{m} meados dos anos 70 e 80 maquinas dataflow cresceram em popularidade na área acadêmica, tornaram-se alvo de diversos estudos. Múltiplos projetos e protótipos ao redor do mundo começaram a ser construidos e estudados. Entre essas máquinas estava o projeto da Máquina Dataflow de Manchester.
+\IEEEPARstart{E}{m} meados dos anos 70 e 80 maquinas dataflow cresceram em popularidade na área acadêmica, tornando-se alvo de diversos estudos. Múltiplos projetos e protótipos começaram a surgir ao redor do mundo para demonstrar sua aplicabilidade e desempenho. Entre essas máquinas estava o projeto da Máquina Dataflow de Manchester.
 
 Poucos projetos chegaram a de fato implementar os designs propostos, e meno ainda atingiram um protótipo funcional. A da Máquina de Manchester foi um dos poucos projetos que saiu do papel, não só um protótipo funcional, mas com um {\em toolkit} bastante completo incluindo: compilador, assembler e simulador. 
 
@@ -528,6 +528,8 @@ Além disso, os dados só podem fluir pelas unidades funcionais se todos os oper
 
 Assim como para sistemas computacionais convencionais, programas dataflow podem ser escritos em linguagens de programação de alto nível. O tipo mais conveniente de linguagem para compilar programas dataflow são linguagens com atribuição simples, ou seja, exceto pelo valor inicial, cada símbolo só pode ser atribuído uma vez. Isso é mostrado na Listagem \ref{lst:sisal}, que define um programa na linguagem Sisal que calcula a área abaixo da curva $y = x^2$.
 
+\lstinputlisting[label=lst:sisal,frame=single,tabsize=4,caption=Programa exemplo em Sisal]{sisal.txt}
+
 A compilação de programas em alto nível são inicialmente traduzidas para uma linguagem de nível intermediário, quase equivalente ao {\em macroassembler} convencional, como a linguagem TASS, mostrado na Listagem \ref{lst:tass}.
 
 A última fase da compilação forma um programa em código de máquina com a entrada. A Figura \ref{fig:dataflow} mostra a representação gráfica usual de programas dataflow.
@@ -536,8 +538,7 @@ A última fase da compilação forma um programa em código de máquina com a en
 Existem dois tipos de maquinas dataflow: {\bf dinâmicas} e {\bf estáticas}. Em máquinnas estáticas não é possível executar nenhum tipo de código reentrante sem auxilio de alguma extrutura interna para garantir que {\em tokens} de contextos diferentes não se misturem.
 
 Já maquinas dinâmicas permitem a execução de códigos reentrantes usando-se rótulos ({\em tags}), que atuam como identificadores de contexto de cada token, permitindo diferenciar cada um deles dinâmicamente em tempo de execução e tratá-los corretamente.
-\vfill
-\break
+
 \section{Implementação}
 \subsection{Tokens}
 A Máquina de Manchester possui {\em tokens} representados por 96 bits divididos da seguinte forma: dados (37 bits), rótulo (36 bits), destino (22 bits), marcador (1 bit). 
@@ -556,6 +557,13 @@ O rótulo por sua vez e subdividido em três tipos:
 \subsection{Token Ring}
 O {\em Token Ring} é um conjunto de unidades funcionais onde os tokens circulam, sendo processados. A Figura \ref{fig:tokenRing} mostra as unidades funcionais do token ring.
 
+\begin{figure}
+	\centering
+	\caption{Token Ring da máquina dataflow de Manchester}
+	\label{fig:tokenRing}
+	\frame{\includegraphics[width=\columnwidth]{figura}}
+\end{figure}
+
 \begin{description}
 \item[\bf I/O Switch] \hfill \\
 	O I/O Switch é o bloco de entrada e saída da máquina. É usado para carregar o programa na memória e transferir resultados de volta.
@@ -571,7 +579,6 @@ O {\em Token Ring} é um conjunto de unidades funcionais onde os tokens circulam
 	Unidade que recebe o pacote executável, o pre-processa e encaminha para a unidade funcional correspondente à operação. Após execução da operação, um novo token é gerado e mandado para o Token Queue, recomeçando o ciclo.
 \end{description}
 
-
 \begin{thebibliography}{1}
 
 \bibitem{IEEEhowto:kopka}
@@ -580,8 +587,6 @@ J. R. GURD, C. C. KIRKHAM, and I. WATSON (1985). {\em THE MANCHESTER PROTOTYPE D
 \end{thebibliography}
 
 \onecolumn
-
-\lstinputlisting[label=lst:sisal,frame=single,tabsize=4,caption=Programa exemplo em Sisal]{sisal.txt}
 
 \break
 
@@ -593,14 +598,7 @@ J. R. GURD, C. C. KIRKHAM, and I. WATSON (1985). {\em THE MANCHESTER PROTOTYPE D
 	\centering
 	\caption{Fluxo de dados do Listing \ref{lst:sisal}}
 	\label{fig:dataflow}
-	\includegraphics[height=\textheight]{programa}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\caption{Token Ring da máquina dataflow de Manchester}
-	\label{fig:tokenRing}
-	\includegraphics[width=\textwidth]{figura}
+	\frame{	\includegraphics[height=\textheight]{programa}}
 \end{figure}
 
 % needed in second column of first page if using \IEEEpubid
