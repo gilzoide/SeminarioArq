@@ -4,7 +4,7 @@
 \usepackage[brazilian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage[font=small,skip=5pt]{caption}
@@ -541,7 +541,7 @@ Já maquinas dinâmicas permitem a execução de códigos reentrantes usando-se 
 
 \section{Implementação}
 \subsection{Tokens}
-A Máquina de Manchester possui {\em tokens} representados por 96 bits divididos da seguinte forma: dados (37 bits), rótulo (36 bits), destino (22 bits), marcador (1 bit). 
+A Máquina de Manchester possui {\em tokens} representados geralmente por 96 bits divididos da seguinte forma: dados (37 bits), rótulo (36 bits), destino (22 bits), marcador (1 bit). 
 
 O rótulo por sua vez e subdividido em três tipos:
 \begin{description}
@@ -553,9 +553,12 @@ O rótulo por sua vez e subdividido em três tipos:
 	Usado quando uma mesma operação é aplicada a diversos elementos de uma estrutura de dados.
 \end{description}
 
+A presença desses rótulos é essencial para permitir a concorrência de códigos reentrantes. Do contrário trechos repetidos de código teriam que ser executados de maneira síncrona, com apenas tokens de um mesmo contexto presente de cada vez, o que prejudicaria muito o desempenho e eficiência.
 
 \subsection{Token Ring}
-O {\em Token Ring} é um conjunto de unidades funcionais onde os tokens circulam, sendo processados. A Figura \ref{fig:tokenRing} mostra as unidades funcionais do token ring.
+O {\em Token Ring} é um conjunto de unidades funcionais onde os tokens circulam, sendo modificados e processados. A Figura \ref{fig:tokenRing} mostra as unidades funcionais do token ring. Cada estágio pode alterar o token acrescentando ou removendo informações conforme o necessário.
+
+Devido a limitações de largura de banda é essencial que o tamanho dos tokens seja o menor possível, por isso diferentes formatos de tokens existem para permitir maior flexibilidade. Por exemplo um token pode conter dois destinos para economizar um \emph{DUP} ou ele pode conter uma entrada e um valor constante, para transformá-lo numa operação unária (mais rápida pois passa direto pela \emph{Matching Unit}).
 
 \begin{figure}
 	\centering
